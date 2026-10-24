@@ -1,0 +1,25 @@
+# Python byte-compiled & cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Test & coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ROS 2 Colcon build artifacts
+build/
+install/
+log/
+
+# IDE / Editor metadata
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Runtime logs
+*.log
