@@ -1,0 +1,700 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="garden_park">
+    <physics type="ode">
+      <real_time_update_rate>250.0</real_time_update_rate>
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- Essential Gazebo Harmonic Simulation Plugins -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"/>
+
+    <!-- Geographic Coordinates for GPS / NavSat System -->
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>37.774929</latitude_deg>
+      <longitude_deg>-122.419416</longitude_deg>
+      <elevation>10.0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+
+    <!-- Atmospheric Sky, Ambient Lighting & Sunlight -->
+    <scene>
+      <ambient>0.72 0.75 0.78 1.0</ambient>
+      <background>0.72 0.84 0.98 1.0</background>
+      <shadows>false</shadows>
+      <sky>
+        <clouds>
+          <speed>3.0</speed>
+          <humidity>0.30</humidity>
+        </clouds>
+      </sky>
+    </scene>
+
+    <!-- Warm Directional Sunlight -->
+    <light type="directional" name="sun">
+      <cast_shadows>false</cast_shadows>
+      <pose>10 20 25 0 0 0</pose>
+      <diffuse>0.96 0.94 0.88 1.0</diffuse>
+      <specular>0.30 0.30 0.30 1.0</specular>
+      <direction>-0.35 -0.30 -0.88</direction>
+    </light>
+
+    <!-- Camera Viewpoint Overlooking Full Garden Park -->
+    <gui fullscreen="0">
+      <camera name="user_camera">
+        <pose>0.0 -19.0 21.0 0 0.82 1.5708</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+
+    <!-- ================================================================= -->
+    <!-- 1. Ground: Lush Botanical Lawn (48m x 48m)                        -->
+    <!-- ================================================================= -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>48 48</size></plane>
+          </geometry>
+          <surface>
+            <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>48 48</size></plane>
+          </geometry>
+          <material>
+            <ambient>0.15 0.55 0.15 1.0</ambient>
+            <diffuse>0.15 0.55 0.15 1.0</diffuse>
+            <specular>0.06 0.10 0.06 1.0</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 2. Pathways: 3 Wide Plazas & 3 Stone Promenades (A-B, B-C, C-A)   -->
+    <!-- ================================================================= -->
+    <model name="garden_pathways">
+      <static>true</static>
+
+      <!-- ─── Plaza A: South Grand Entrance (0.0, -7.5) ───────────────── -->
+      <!-- Outer Terracotta Curb Ring (diameter 6.2m) -->
+      <link name="plaza_a_curb">
+        <pose>0.0 -7.5 0.015 0 0 0</pose>
+        <visual name="v"><geometry><cylinder><radius>3.1</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.56 0.44 0.32 1.0</ambient><diffuse>0.62 0.50 0.38 1.0</diffuse></material>
+        </visual>
+      </link>
+      <!-- Inner Slate Patio (diameter 5.8m) -->
+      <link name="plaza_a_patio">
+        <pose>0.0 -7.5 0.025 0 0 0</pose>
+        <visual name="v"><geometry><cylinder><radius>2.9</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.36 0.36 0.40 1.0</ambient><diffuse>0.42 0.42 0.46 1.0</diffuse></material>
+        </visual>
+      </link>
+      <!-- Center Decorative Medallion -->
+      <link name="plaza_a_medallion">
+        <pose>0.0 -7.5 0.032 0 0 0</pose>
+        <visual name="v"><geometry><cylinder><radius>1.1</radius><length>0.015</length></cylinder></geometry>
+          <material><ambient>0.22 0.22 0.26 1.0</ambient><diffuse>0.28 0.28 0.32 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- ─── Plaza B: East Pavilion & Rose Garden (9.5, 6.0) ─────────── -->
+      <link name="plaza_b_curb">
+        <pose>9.5 6.0 0.015 0 0 0</pose>
+        <visual name="v"><geometry><cylinder><radius>3.1</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.56 0.44 0.32 1.0</ambient><diffuse>0.62 0.50 0.38 1.0</diffuse></material>
+        </visual>
+      </link>
+      <link name="plaza_b_patio">
+        <pose>9.5 6.0 0.025 0 0 0</pose>
+        <visual name="v"><geometry><cylinder><radius>2.9</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.36 0.36 0.40 1.0</ambient><diffuse>0.42 0.42 0.46 1.0</diffuse></material>
+        </visual>
+      </link>
+      <link name="plaza_b_medallion">
+        <pose>9.5 6.0 0.032 0 0 0</pose>
+        <visual name="v"><geometry><cylinder><radius>1.1</radius><length>0.015</length></cylinder></geometry>
+          <material><ambient>0.22 0.22 0.26 1.0</ambient><diffuse>0.28 0.28 0.32 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- ─── Plaza C: West Fountain Terrace (-9.5, 6.0) ──────────────── -->
+      <link name="plaza_c_curb">
+        <pose>-9.5 6.0 0.015 0 0 0</pose>
+        <visual name="v"><geometry><cylinder><radius>3.1</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.56 0.44 0.32 1.0</ambient><diffuse>0.62 0.50 0.38 1.0</diffuse></material>
+        </visual>
+      </link>
+      <link name="plaza_c_patio">
+        <pose>-9.5 6.0 0.025 0 0 0</pose>
+        <visual name="v"><geometry><cylinder><radius>2.9</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.36 0.36 0.40 1.0</ambient><diffuse>0.42 0.42 0.46 1.0</diffuse></material>
+        </visual>
+      </link>
+      <link name="plaza_c_medallion">
+        <pose>-9.5 6.0 0.032 0 0 0</pose>
+        <visual name="v"><geometry><cylinder><radius>1.1</radius><length>0.015</length></cylinder></geometry>
+          <material><ambient>0.22 0.22 0.26 1.0</ambient><diffuse>0.28 0.28 0.32 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- ─── Path 1: A to B (2.6m wide slate road with curbs) ────────── -->
+      <!-- Center (4.75, -0.75), Length 11.6m, Heading 0.957 rad -->
+      <link name="path_a_to_b">
+        <pose>4.75 -0.75 0.02 0 0 0.957</pose>
+        <visual name="paving"><geometry><box><size>11.6 2.6 0.02</size></box></geometry>
+          <material><ambient>0.24 0.24 0.26 1.0</ambient><diffuse>0.28 0.28 0.32 1.0</diffuse></material>
+        </visual>
+        <!-- Outer Border Curb (Stops before entering plaza patio) -->
+        <visual name="curb_outer"><pose>0 1.35 0.02 0 0 0</pose><geometry><box><size>11.0 0.12 0.035</size></box></geometry>
+          <material><ambient>0.55 0.45 0.35 1.0</ambient><diffuse>0.60 0.50 0.40 1.0</diffuse></material>
+        </visual>
+        <!-- Inner Border Curb -->
+        <visual name="curb_inner"><pose>0 -1.35 0.02 0 0 0</pose><geometry><box><size>11.0 0.12 0.035</size></box></geometry>
+          <material><ambient>0.55 0.45 0.35 1.0</ambient><diffuse>0.60 0.50 0.40 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- ─── Path 2: B to C (2.6m wide North Promenade) ──────────────── -->
+      <!-- Center (0.0, 6.0), Length 14.0m, Heading 0.0 rad -->
+      <link name="path_b_to_c">
+        <pose>0.0 6.0 0.02 0 0 0</pose>
+        <visual name="paving"><geometry><box><size>14.0 2.6 0.02</size></box></geometry>
+          <material><ambient>0.24 0.24 0.26 1.0</ambient><diffuse>0.28 0.28 0.32 1.0</diffuse></material>
+        </visual>
+        <!-- North Outer Curb -->
+        <visual name="curb_north"><pose>0 1.35 0.02 0 0 0</pose><geometry><box><size>13.4 0.12 0.035</size></box></geometry>
+          <material><ambient>0.55 0.45 0.35 1.0</ambient><diffuse>0.60 0.50 0.40 1.0</diffuse></material>
+        </visual>
+        <!-- South Inner Curb -->
+        <visual name="curb_south"><pose>0 -1.35 0.02 0 0 0</pose><geometry><box><size>13.4 0.12 0.035</size></box></geometry>
+          <material><ambient>0.55 0.45 0.35 1.0</ambient><diffuse>0.60 0.50 0.40 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- ─── Path 3: C to A (2.6m wide slate road with curbs) ────────── -->
+      <!-- Center (-4.75, -0.75), Length 11.6m, Heading -0.957 rad -->
+      <link name="path_c_to_a">
+        <pose>-4.75 -0.75 0.02 0 0 -0.957</pose>
+        <visual name="paving"><geometry><box><size>11.6 2.6 0.02</size></box></geometry>
+          <material><ambient>0.24 0.24 0.26 1.0</ambient><diffuse>0.28 0.28 0.32 1.0</diffuse></material>
+        </visual>
+        <!-- Outer Border Curb -->
+        <visual name="curb_outer"><pose>0 1.35 0.02 0 0 0</pose><geometry><box><size>11.0 0.12 0.035</size></box></geometry>
+          <material><ambient>0.55 0.45 0.35 1.0</ambient><diffuse>0.60 0.50 0.40 1.0</diffuse></material>
+        </visual>
+        <!-- Inner Border Curb -->
+        <visual name="curb_inner"><pose>0 -1.35 0.02 0 0 0</pose><geometry><box><size>11.0 0.12 0.035</size></box></geometry>
+          <material><ambient>0.55 0.45 0.35 1.0</ambient><diffuse>0.60 0.50 0.40 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- ─── Central Roundabout Promenade Apron (0.0, 0.0) ─────────── -->
+      <!-- Seamless circular stone concourse connecting all 3 park avenues -->
+      <link name="central_roundabout_apron">
+        <pose>0.0 0.0 0.015 0 0 0</pose>
+        <visual name="apron_paving">
+          <geometry><cylinder><radius>3.5</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.26 0.26 0.28 1.0</ambient><diffuse>0.30 0.30 0.34 1.0</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 3. Sculpted Boxwood Hedges (Generous Clearance: >2.1m from Center)-->
+    <!-- All inner and outer hedges stop >4.5m from plazas for wide turns  -->
+    <!-- ================================================================= -->
+    <model name="garden_hedges">
+      <static>true</static>
+
+      <!-- ─── Outer Perimeter Garden Hedges (Providing outer road bounds for SLAM) ─── -->
+      <!-- North Outer Hedge along Path B->C (at y=8.0, length 8.0m) -->
+      <link name="hedge_bc_outer">
+        <pose>0.0 8.0 0.40 0 0 0</pose>
+        <collision name="c"><geometry><box><size>8.0 0.35 0.80</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>8.0 0.35 0.80</size></box></geometry>
+          <material><ambient>0.08 0.38 0.10 1.0</ambient><diffuse>0.10 0.44 0.12 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- Outer Hedge along Path A->B (offset 2.3m outward, length 6.5m) -->
+      <link name="hedge_ab_outer">
+        <pose>6.9 -1.7 0.40 0 0 0.957</pose>
+        <collision name="c"><geometry><box><size>6.5 0.35 0.80</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>6.5 0.35 0.80</size></box></geometry>
+          <material><ambient>0.08 0.38 0.10 1.0</ambient><diffuse>0.10 0.44 0.12 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- Outer Hedge along Path C->A (offset 2.3m outward, length 6.5m) -->
+      <link name="hedge_ca_outer">
+        <pose>-6.9 -1.7 0.40 0 0 -0.957</pose>
+        <collision name="c"><geometry><box><size>6.5 0.35 0.80</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>6.5 0.35 0.80</size></box></geometry>
+          <material><ambient>0.08 0.38 0.10 1.0</ambient><diffuse>0.10 0.44 0.12 1.0</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 3b. Fully Enclosed Park Perimeter Wall & Boundary Architecture    -->
+    <!-- Completely surrounds the park with 4 continuous solid walls.      -->
+    <!-- Guarantees the robot can NEVER escape into the infinite plane,    -->
+    <!-- and provides solid, crisp 360° LiDAR reflections for SLAM & Nav2. -->
+    <!-- ================================================================= -->
+    <model name="garden_outer_boundary">
+      <static>true</static>
+
+      <!-- 1. South Perimeter Wall (y = -11.5m, Length 28.0m, Height 1.2m) -->
+      <link name="perimeter_south">
+        <pose>0.0 -11.5 0.60 0 0 0</pose>
+        <collision name="c"><geometry><box><size>28.0 0.45 1.20</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>28.0 0.45 1.20</size></box></geometry>
+          <material><ambient>0.08 0.32 0.12 1.0</ambient><diffuse>0.11 0.40 0.15 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- 2. North Perimeter Wall (y = +10.5m, Length 28.0m, Height 1.2m) -->
+      <link name="perimeter_north">
+        <pose>0.0 10.5 0.60 0 0 0</pose>
+        <collision name="c"><geometry><box><size>28.0 0.45 1.20</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>28.0 0.45 1.20</size></box></geometry>
+          <material><ambient>0.08 0.32 0.12 1.0</ambient><diffuse>0.11 0.40 0.15 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- 3. West Perimeter Wall (x = -13.8m, Length 22.0m, Height 1.2m) -->
+      <link name="perimeter_west">
+        <pose>-13.8 -0.5 0.60 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.45 22.0 1.20</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.45 22.0 1.20</size></box></geometry>
+          <material><ambient>0.08 0.32 0.12 1.0</ambient><diffuse>0.11 0.40 0.15 1.0</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- 4. East Perimeter Wall (x = +13.8m, Length 22.0m, Height 1.2m) -->
+      <link name="perimeter_east">
+        <pose>13.8 -0.5 0.60 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.45 22.0 1.20</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.45 22.0 1.20</size></box></geometry>
+          <material><ambient>0.08 0.32 0.12 1.0</ambient><diffuse>0.11 0.40 0.15 1.0</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 4. Victorian Cast-Iron Garden Lamp Posts (Warm Amber Glow)        -->
+    <!-- ================================================================= -->
+    <model name="garden_lamp_posts">
+      <static>true</static>
+
+      <!-- Macro link structure replicated cleanly for 6 key park locations -->
+      <!-- Lamp 1: South Plaza Entrance (0.0, -10.2) -->
+      <link name="lamp_a">
+        <pose>0.0 -10.2 0.0 0 0 0</pose>
+        <!-- Fluted Post Base -->
+        <visual name="base"><pose>0 0 0.25 0 0 0</pose><geometry><cylinder><radius>0.18</radius><length>0.50</length></cylinder></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <!-- Slim Mast Column -->
+        <visual name="post"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.05</radius><length>2.0</length></cylinder></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <collision name="col"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.12</radius><length>3.0</length></cylinder></geometry></collision>
+        <!-- Brass Lantern Cage -->
+        <visual name="lantern"><pose>0 0 2.65 0 0 0</pose><geometry><box><size>0.26 0.26 0.35</size></box></geometry>
+          <material><ambient>0.55 0.45 0.20 1</ambient><diffuse>0.65 0.55 0.25 1</diffuse></material>
+        </visual>
+        <!-- Glowing Amber Core Light Bulb -->
+        <visual name="glow"><pose>0 0 2.65 0 0 0</pose><geometry><sphere><radius>0.10</radius></sphere></geometry>
+          <material><ambient>1.0 0.92 0.65 1</ambient><diffuse>1.0 0.95 0.75 1</diffuse><emissive>1.0 0.90 0.60 1</emissive></material>
+        </visual>
+      </link>
+
+      <!-- Lamp 2: East Pavilion (11.8, 7.8) -->
+      <link name="lamp_b">
+        <pose>11.8 7.8 0.0 0 0 0</pose>
+        <visual name="base"><pose>0 0 0.25 0 0 0</pose><geometry><cylinder><radius>0.18</radius><length>0.50</length></cylinder></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <visual name="post"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.05</radius><length>2.0</length></cylinder></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <collision name="col"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.12</radius><length>3.0</length></cylinder></geometry></collision>
+        <visual name="lantern"><pose>0 0 2.65 0 0 0</pose><geometry><box><size>0.26 0.26 0.35</size></box></geometry>
+          <material><ambient>0.55 0.45 0.20 1</ambient><diffuse>0.65 0.55 0.25 1</diffuse></material>
+        </visual>
+        <visual name="glow"><pose>0 0 2.65 0 0 0</pose><geometry><sphere><radius>0.10</radius></sphere></geometry>
+          <material><ambient>1.0 0.92 0.65 1</ambient><diffuse>1.0 0.95 0.75 1</diffuse><emissive>1.0 0.90 0.60 1</emissive></material>
+        </visual>
+      </link>
+
+      <!-- Lamp 3: West Terrace (-11.8, 7.8) -->
+      <link name="lamp_c">
+        <pose>-11.8 7.8 0.0 0 0 0</pose>
+        <visual name="base"><pose>0 0 0.25 0 0 0</pose><geometry><cylinder><radius>0.18</radius><length>0.50</length></cylinder></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <visual name="post"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.05</radius><length>2.0</length></cylinder></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <collision name="col"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.12</radius><length>3.0</length></cylinder></geometry></collision>
+        <visual name="lantern"><pose>0 0 2.65 0 0 0</pose><geometry><box><size>0.26 0.26 0.35</size></box></geometry>
+          <material><ambient>0.55 0.45 0.20 1</ambient><diffuse>0.65 0.55 0.25 1</diffuse></material>
+        </visual>
+        <visual name="glow"><pose>0 0 2.65 0 0 0</pose><geometry><sphere><radius>0.10</radius></sphere></geometry>
+          <material><ambient>1.0 0.92 0.65 1</ambient><diffuse>1.0 0.95 0.75 1</diffuse><emissive>1.0 0.90 0.60 1</emissive></material>
+        </visual>
+      </link>
+
+      <!-- Lamp 4: North Promenade Midpoint (0.0, 8.5) -->
+      <link name="lamp_mid_bc">
+        <pose>0.0 8.5 0.0 0 0 0</pose>
+        <visual name="post"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.05</radius><length>2.0</length></cylinder></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <collision name="col"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.12</radius><length>3.0</length></cylinder></geometry></collision>
+        <visual name="glow"><pose>0 0 2.65 0 0 0</pose><geometry><sphere><radius>0.10</radius></sphere></geometry>
+          <material><ambient>1.0 0.92 0.65 1</ambient><diffuse>1.0 0.95 0.75 1</diffuse><emissive>1.0 0.90 0.60 1</emissive></material>
+        </visual>
+      </link>
+
+      <!-- Lamp 5: East Road Midpoint (7.5, 0.4) -->
+      <link name="lamp_mid_ab">
+        <pose>7.5 0.4 0.0 0 0 0</pose>
+        <visual name="post"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.05</radius><length>2.0</length></cylinder></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <collision name="col"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.12</radius><length>3.0</length></cylinder></geometry></collision>
+        <visual name="glow"><pose>0 0 2.65 0 0 0</pose><geometry><sphere><radius>0.10</radius></sphere></geometry>
+          <material><ambient>1.0 0.92 0.65 1</ambient><diffuse>1.0 0.95 0.75 1</diffuse><emissive>1.0 0.90 0.60 1</emissive></material>
+        </visual>
+      </link>
+
+      <!-- Lamp 6: West Road Midpoint (-7.5, 0.4) -->
+      <link name="lamp_mid_ca">
+        <pose>-7.5 0.4 0.0 0 0 0</pose>
+        <visual name="post"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.05</radius><length>2.0</length></cylinder></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <collision name="col"><pose>0 0 1.5 0 0 0</pose><geometry><cylinder><radius>0.12</radius><length>3.0</length></cylinder></geometry></collision>
+        <visual name="glow"><pose>0 0 2.65 0 0 0</pose><geometry><sphere><radius>0.10</radius></sphere></geometry>
+          <material><ambient>1.0 0.92 0.65 1</ambient><diffuse>1.0 0.95 0.75 1</diffuse><emissive>1.0 0.90 0.60 1</emissive></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 5. Central Grand Oak Tree Roundabout (0.0, 0.0)                   -->
+    <!-- Raised 0.55m stone retaining wall + 0.25m sculpted boxwood hedge  -->
+    <!-- 100% detectable by LiDAR (beam at z=0.315m); zero blind spots!    -->
+    <!-- ================================================================= -->
+    <model name="tree_obstacle">
+      <static>true</static>
+      <pose>0.0 0.0 0.0 0 0 0</pose>
+      <link name="tree_link">
+        <!-- Circular Natural Stone Retaining Wall (radius 2.20m, height 0.55m) -->
+        <visual name="roundabout_stone_wall">
+          <pose>0 0 0.275 0 0 0</pose>
+          <geometry><cylinder><radius>2.20</radius><length>0.55</length></cylinder></geometry>
+          <material><ambient>0.48 0.40 0.32 1.0</ambient><diffuse>0.56 0.48 0.40 1.0</diffuse></material>
+        </visual>
+        <collision name="bed_c">
+          <pose>0 0 0.275 0 0 0</pose>
+          <geometry><cylinder><radius>2.20</radius><length>0.55</length></cylinder></geometry>
+        </collision>
+
+        <!-- Sculpted Circular Boxwood Hedge Crown (radius 2.25m, height 0.25m) -->
+        <visual name="roundabout_hedge_crown">
+          <pose>0 0 0.65 0 0 0</pose>
+          <geometry><cylinder><radius>2.25</radius><length>0.25</length></cylinder></geometry>
+          <material><ambient>0.08 0.38 0.10 1.0</ambient><diffuse>0.10 0.44 0.12 1.0</diffuse></material>
+        </visual>
+        <collision name="hedge_crown_c">
+          <pose>0 0 0.65 0 0 0</pose>
+          <geometry><cylinder><radius>2.25</radius><length>0.25</length></cylinder></geometry>
+        </collision>
+
+        <!-- Raised Botanical Mulch Bed -->
+        <visual name="mulch">
+          <pose>0 0 0.525 0 0 0</pose>
+          <geometry><cylinder><radius>2.05</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.16 0.11 0.07 1</ambient><diffuse>0.22 0.15 0.10 1</diffuse></material>
+        </visual>
+
+        <!-- Circular Wrap-Around Wooden Tree Bench -->
+        <visual name="tree_bench">
+          <pose>0 0 0.72 0 0 0</pose>
+          <geometry><cylinder><radius>1.10</radius><length>0.06</length></cylinder></geometry>
+          <material><ambient>0.52 0.30 0.14 1</ambient><diffuse>0.60 0.35 0.18 1</diffuse></material>
+        </visual>
+
+        <!-- Thick Gnarled Oak Trunk -->
+        <visual name="trunk">
+          <pose>0 0 1.8 0 0 0</pose>
+          <geometry><cylinder><radius>0.36</radius><length>2.6</length></cylinder></geometry>
+          <material><ambient>0.32 0.18 0.08 1.0</ambient><diffuse>0.38 0.22 0.12 1.0</diffuse></material>
+        </visual>
+        <collision name="trunk_c">
+          <pose>0 0 1.8 0 0 0</pose>
+          <geometry><cylinder><radius>0.36</radius><length>2.6</length></cylinder></geometry>
+        </collision>
+
+        <!-- Multi-Tiered Organic Foliage Canopy (Emerald Green) -->
+        <visual name="canopy_base"><pose>0 0 3.1 0 0 0</pose><geometry><sphere><radius>1.7</radius></sphere></geometry>
+          <material><ambient>0.10 0.44 0.14 1.0</ambient><diffuse>0.14 0.52 0.18 1.0</diffuse></material>
+        </visual>
+        <visual name="canopy_mid"><pose>0.2 0.1 4.0 0 0 0</pose><geometry><sphere><radius>1.3</radius></sphere></geometry>
+          <material><ambient>0.12 0.48 0.16 1.0</ambient><diffuse>0.16 0.58 0.20 1.0</diffuse></material>
+        </visual>
+        <visual name="canopy_top"><pose>-0.1 -0.1 4.8 0 0 0</pose><geometry><sphere><radius>0.9</radius></sphere></geometry>
+          <material><ambient>0.14 0.54 0.18 1.0</ambient><diffuse>0.18 0.64 0.22 1.0</diffuse></material>
+        </visual>
+
+        <!-- Blooming Rose Bushes in Flower Bed -->
+        <visual name="rose_1"><pose>1.3 0.7 0.65 0 0 0</pose><geometry><sphere><radius>0.25</radius></sphere></geometry>
+          <material><ambient>0.88 0.10 0.20 1</ambient><diffuse>0.95 0.15 0.25 1</diffuse></material>
+        </visual>
+        <visual name="rose_2"><pose>-1.3 0.7 0.65 0 0 0</pose><geometry><sphere><radius>0.25</radius></sphere></geometry>
+          <material><ambient>0.95 0.80 0.10 1</ambient><diffuse>1.0 0.85 0.15 1</diffuse></material>
+        </visual>
+        <visual name="rose_3"><pose>0.0 -1.4 0.65 0 0 0</pose><geometry><sphere><radius>0.25</radius></sphere></geometry>
+          <material><ambient>0.70 0.15 0.85 1</ambient><diffuse>0.80 0.20 0.95 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 6. Architectural Feature: Grand Water Fountain at Zone C          -->
+    <!-- ================================================================= -->
+    <model name="park_fountain">
+      <static>true</static>
+      <pose>-9.5 8.5 0.0 0 0 0</pose>
+      <link name="fountain_link">
+        <!-- Lower Carved Stone Basin (radius 1.5m, height 0.50m) -->
+        <visual name="rim"><pose>0 0 0.25 0 0 0</pose><geometry><cylinder><radius>1.5</radius><length>0.50</length></cylinder></geometry>
+          <material><ambient>0.50 0.50 0.54 1</ambient><diffuse>0.60 0.60 0.64 1</diffuse></material>
+        </visual>
+        <collision name="c"><pose>0 0 0.25 0 0 0</pose><geometry><cylinder><radius>1.5</radius><length>0.50</length></cylinder></geometry></collision>
+        <!-- Crystalline Turquoise Water Pool -->
+        <visual name="water"><pose>0 0 0.46 0 0 0</pose><geometry><cylinder><radius>1.38</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.08 0.55 0.85 0.9</ambient><diffuse>0.12 0.65 0.95 0.95</diffuse><specular>0.9 0.9 0.9 1</specular></material>
+        </visual>
+        <!-- Fluted Pedestal Column -->
+        <visual name="pedestal"><pose>0 0 0.80 0 0 0</pose><geometry><cylinder><radius>0.40</radius><length>0.70</length></cylinder></geometry>
+          <material><ambient>0.45 0.45 0.48 1</ambient><diffuse>0.55 0.55 0.58 1</diffuse></material>
+        </visual>
+        <!-- Upper Cascade Basin Bowl -->
+        <visual name="bowl_upper"><pose>0 0 1.15 0 0 0</pose><geometry><cylinder><radius>0.75</radius><length>0.18</length></cylinder></geometry>
+          <material><ambient>0.50 0.50 0.54 1</ambient><diffuse>0.60 0.60 0.64 1</diffuse></material>
+        </visual>
+        <!-- Top Ornamental Spout Finial -->
+        <visual name="spout"><pose>0 0 1.45 0 0 0</pose><geometry><sphere><radius>0.22</radius></sphere></geometry>
+          <material><ambient>0.6 0.5 0.25 1</ambient><diffuse>0.7 0.6 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 7. Architectural Feature: Slatted Teak Park Bench at Zone B       -->
+    <!-- ================================================================= -->
+    <model name="park_bench">
+      <static>true</static>
+      <pose>9.5 8.5 0.25 0 0 0</pose>
+      <link name="bench_link">
+        <!-- Slatted Teak Seat -->
+        <visual name="seat"><pose>0 0 0.16 0 0 0</pose><geometry><box><size>1.6 0.46 0.04</size></box></geometry>
+          <material><ambient>0.55 0.32 0.14 1.0</ambient><diffuse>0.62 0.38 0.18 1.0</diffuse></material>
+        </visual>
+        <collision name="seat_c"><pose>0 0 0.16 0 0 0</pose><geometry><box><size>1.6 0.46 0.04</size></box></geometry></collision>
+        <!-- Slatted Teak Backrest -->
+        <visual name="backrest"><pose>0 0.21 0.40 0 0 0</pose><geometry><box><size>1.6 0.05 0.42</size></box></geometry>
+          <material><ambient>0.55 0.32 0.14 1.0</ambient><diffuse>0.62 0.38 0.18 1.0</diffuse></material>
+        </visual>
+        <collision name="back_c"><pose>0 0.21 0.40 0 0 0</pose><geometry><box><size>1.6 0.05 0.42</size></box></geometry></collision>
+        <!-- Cast Iron Arched Legs -->
+        <visual name="leg_l"><pose>-0.7 0 -0.05 0 0 0</pose><geometry><box><size>0.08 0.44 0.36</size></box></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leg_r"><pose>0.7 0 -0.05 0 0 0</pose><geometry><box><size>0.08 0.44 0.36</size></box></geometry>
+          <material><ambient>0.10 0.10 0.12 1</ambient><diffuse>0.15 0.15 0.18 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 8. Architectural Feature: Floral Planter Box at Zone A Entrance   -->
+    <!-- ================================================================= -->
+    <model name="planter_box">
+      <static>true</static>
+      <pose>0.0 -9.8 0.25 0 0 0</pose>
+      <link name="planter_link">
+        <visual name="box_v"><geometry><box><size>2.6 0.75 0.46</size></box></geometry>
+          <material><ambient>0.45 0.45 0.48 1.0</ambient><diffuse>0.55 0.55 0.58 1.0</diffuse></material>
+        </visual>
+        <collision name="box_c"><geometry><box><size>2.6 0.75 0.46</size></box></geometry></collision>
+        <!-- Rich Soil -->
+        <visual name="soil"><pose>0 0 0.235 0 0 0</pose><geometry><box><size>2.4 0.62 0.02</size></box></geometry>
+          <material><ambient>0.16 0.11 0.07 1</ambient><diffuse>0.22 0.15 0.10 1</diffuse></material>
+        </visual>
+        <!-- Blooming Floral Shrubs (Vivid Blossom Trio) -->
+        <visual name="flower_1"><pose>-0.8 0 0.34 0 0 0</pose><geometry><sphere><radius>0.22</radius></sphere></geometry>
+          <material><ambient>0.92 0.15 0.25 1.0</ambient><diffuse>0.98 0.20 0.30 1.0</diffuse></material>
+        </visual>
+        <visual name="flower_2"><pose>0.0 0 0.36 0 0 0</pose><geometry><sphere><radius>0.24</radius></sphere></geometry>
+          <material><ambient>0.95 0.85 0.10 1.0</ambient><diffuse>1.0 0.90 0.15 1.0</diffuse></material>
+        </visual>
+        <visual name="flower_3"><pose>0.8 0 0.34 0 0 0</pose><geometry><sphere><radius>0.22</radius></sphere></geometry>
+          <material><ambient>0.70 0.20 0.85 1.0</ambient><diffuse>0.80 0.25 0.95 1.0</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 9. Dynamic Moving Pedestrian (Strolling Visitor along Path B->C)   -->
+    <!-- ================================================================= -->
+    <model name="garden_pedestrian">
+      <pose>0.0 6.0 0.0 0 0 0</pose>
+      <link name="pedestrian_base">
+        <inertial>
+          <mass>70.0</mass>
+          <inertia><ixx>10.0</ixx><ixy>0</ixy><ixz>0</ixz><iyy>10.0</iyy><iyz>0</iyz><izz>5.0</izz></inertia>
+        </inertial>
+        <collision name="col"><pose>0 0 0.9 0 0 0</pose><geometry><cylinder><radius>0.26</radius><length>1.8</length></cylinder></geometry></collision>
+        <!-- Stroller Torso (Charcoal Gray Jacket) -->
+        <visual name="torso"><pose>0 0 1.15 0 0 0</pose><geometry><box><size>0.28 0.44 0.56</size></box></geometry>
+          <material><ambient>0.18 0.18 0.20 1.0</ambient><diffuse>0.24 0.24 0.28 1.0</diffuse></material>
+        </visual>
+        <!-- Head -->
+        <visual name="head"><pose>0 0 1.58 0 0 0</pose><geometry><sphere><radius>0.14</radius></sphere></geometry>
+          <material><ambient>0.85 0.65 0.50 1.0</ambient><diffuse>0.92 0.72 0.56 1.0</diffuse></material>
+        </visual>
+        <!-- Baseball Cap -->
+        <visual name="cap"><pose>0.03 0 1.68 0 0 0</pose><geometry><cylinder><radius>0.15</radius><length>0.06</length></cylinder></geometry>
+          <material><ambient>0.15 0.15 0.18 1.0</ambient><diffuse>0.20 0.20 0.25 1.0</diffuse></material>
+        </visual>
+        <!-- Slate Gray Trouser Legs (Zero blue saturation) -->
+        <visual name="leg_l"><pose>0 0.12 0.45 0 0 0</pose><geometry><cylinder><radius>0.08</radius><length>0.72</length></cylinder></geometry>
+          <material><ambient>0.20 0.20 0.22 1.0</ambient><diffuse>0.25 0.25 0.28 1.0</diffuse></material>
+        </visual>
+        <visual name="leg_r"><pose>0 -0.12 0.45 0 0 0</pose><geometry><cylinder><radius>0.08</radius><length>0.72</length></cylinder></geometry>
+          <material><ambient>0.20 0.20 0.22 1.0</ambient><diffuse>0.25 0.25 0.28 1.0</diffuse></material>
+        </visual>
+      </link>
+      <plugin filename="gz-sim-velocity-control-system" name="gz::sim::systems::VelocityControl">
+        <topic>/pedestrian/cmd_vel</topic>
+      </plugin>
+    </model>
+
+    <!-- ================================================================= -->
+    <!-- 10. Litter Items Scattered Naturally Around the Park World        -->
+    <!-- No pre-determined paths in autonomy; robot discovers via vision!  -->
+    <!-- Varied litter: Red Soda Cans, Blue Beverage Cans, Yellow Boxes    -->
+    <!-- ================================================================= -->
+
+    <!-- Trash A1: Red Soda Can at (2.5, -3.2, 0.05) -->
+    <model name="trash_a1">
+      <static>false</static>
+      <pose>2.5 -3.2 0.05 0 0 0</pose>
+      <link name="trash_link">
+        <inertial><mass>0.05</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial>
+        <collision name="c"><geometry><cylinder><radius>0.065</radius><length>0.13</length></cylinder></geometry></collision>
+        <visual name="v"><geometry><cylinder><radius>0.065</radius><length>0.13</length></cylinder></geometry>
+          <material><ambient>0.96 0.06 0.06 1.0</ambient><diffuse>1.0 0.08 0.08 1.0</diffuse><specular>0.6 0.6 0.6 1</specular></material>
+        </visual>
+        <visual name="lid"><pose>0 0 0.066 0 0 0</pose><geometry><cylinder><radius>0.060</radius><length>0.005</length></cylinder></geometry>
+          <material><ambient>0.80 0.82 0.85 1.0</ambient><diffuse>0.90 0.92 0.95 1.0</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Trash A2: Red Soda Can at (7.2, 2.8, 0.05) -->
+    <model name="trash_a2">
+      <static>false</static>
+      <pose>7.2 2.8 0.05 0 0 0</pose>
+      <link name="trash_link">
+        <inertial><mass>0.05</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial>
+        <collision name="c"><geometry><cylinder><radius>0.065</radius><length>0.13</length></cylinder></geometry></collision>
+        <visual name="v"><geometry><cylinder><radius>0.065</radius><length>0.13</length></cylinder></geometry>
+          <material><ambient>0.96 0.06 0.06 1.0</ambient><diffuse>1.0 0.08 0.08 1.0</diffuse><specular>0.6 0.6 0.6 1</specular></material>
+        </visual>
+        <visual name="lid"><pose>0 0 0.066 0 0 0</pose><geometry><cylinder><radius>0.060</radius><length>0.005</length></cylinder></geometry>
+          <material><ambient>0.80 0.82 0.85 1.0</ambient><diffuse>0.90 0.92 0.95 1.0</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Trash B1: Blue Beverage Can at (4.0, 6.0, 0.05) -->
+    <model name="trash_b1">
+      <static>false</static>
+      <pose>4.0 6.0 0.05 0 0 0</pose>
+      <link name="trash_link">
+        <inertial><mass>0.05</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial>
+        <collision name="c"><geometry><cylinder><radius>0.065</radius><length>0.13</length></cylinder></geometry></collision>
+        <visual name="v"><geometry><cylinder><radius>0.065</radius><length>0.13</length></cylinder></geometry>
+          <material><ambient>0.08 0.35 0.98 1.0</ambient><diffuse>0.12 0.45 1.0 1.0</diffuse><specular>0.6 0.6 0.6 1</specular></material>
+        </visual>
+        <visual name="lid"><pose>0 0 0.066 0 0 0</pose><geometry><cylinder><radius>0.060</radius><length>0.005</length></cylinder></geometry>
+          <material><ambient>0.80 0.82 0.85 1.0</ambient><diffuse>0.90 0.92 0.95 1.0</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Trash B2: Blue Beverage Can at (-4.0, 6.0, 0.05) -->
+    <model name="trash_b2">
+      <static>false</static>
+      <pose>-4.0 6.0 0.05 0 0 0</pose>
+      <link name="trash_link">
+        <inertial><mass>0.05</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial>
+        <collision name="c"><geometry><cylinder><radius>0.065</radius><length>0.13</length></cylinder></geometry></collision>
+        <visual name="v"><geometry><cylinder><radius>0.065</radius><length>0.13</length></cylinder></geometry>
+          <material><ambient>0.08 0.35 0.98 1.0</ambient><diffuse>0.12 0.45 1.0 1.0</diffuse><specular>0.6 0.6 0.6 1</specular></material>
+        </visual>
+        <visual name="lid"><pose>0 0 0.066 0 0 0</pose><geometry><cylinder><radius>0.060</radius><length>0.005</length></cylinder></geometry>
+          <material><ambient>0.80 0.82 0.85 1.0</ambient><diffuse>0.90 0.92 0.95 1.0</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Trash C1: Yellow Snack Box at (-7.2, 2.8, 0.05) -->
+    <model name="trash_c1">
+      <static>false</static>
+      <pose>-7.2 2.8 0.05 0 0 0</pose>
+      <link name="trash_link">
+        <inertial><mass>0.05</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.12 0.12 0.11</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.12 0.12 0.11</size></box></geometry>
+          <material><ambient>0.96 0.86 0.08 1.0</ambient><diffuse>1.0 0.90 0.12 1.0</diffuse><specular>0.3 0.3 0.3 1</specular></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Trash C2: Yellow Snack Box at (-2.5, -3.2, 0.05) -->
+    <model name="trash_c2">
+      <static>false</static>
+      <pose>-2.5 -3.2 0.05 0 0 0</pose>
+      <link name="trash_link">
+        <inertial><mass>0.05</mass><inertia><ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.12 0.12 0.11</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.12 0.12 0.11</size></box></geometry>
+          <material><ambient>0.96 0.86 0.08 1.0</ambient><diffuse>1.0 0.90 0.12 1.0</diffuse><specular>0.3 0.3 0.3 1</specular></material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>

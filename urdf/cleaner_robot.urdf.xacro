@@ -1,0 +1,574 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="cleaner_robot">
+
+  <!-- ================================================================= -->
+  <!-- Dimensions & Physical Parameters                                 -->
+  <!-- ================================================================= -->
+  <xacro:property name="chassis_length" value="0.42"/>
+  <xacro:property name="chassis_width" value="0.30"/>
+  <xacro:property name="chassis_height" value="0.14"/>
+  <xacro:property name="chassis_mass" value="6.0"/>
+
+  <xacro:property name="wheel_radius" value="0.065"/>
+  <xacro:property name="wheel_width" value="0.035"/>
+  <xacro:property name="wheel_separation" value="0.28"/>
+  <xacro:property name="wheel_mass" value="0.5"/>
+
+  <xacro:property name="caster_radius" value="0.03"/>
+  <xacro:property name="caster_mass" value="0.25"/>
+
+  <!-- Inertia Macros -->
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12)*(3*r*r + h*h)}" ixy="0" ixz="0"
+               iyy="${(m/12)*(3*r*r + h*h)}" iyz="0"
+               izz="${(m/2)*(r*r)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12)*(y*y + z*z)}" ixy="0" ixz="0"
+               iyy="${(m/12)*(x*x + z*z)}" iyz="0"
+               izz="${(m/12)*(x*x + y*y)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertia" params="m r">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${(2/5)*m*r*r}" ixy="0" ixz="0"
+               iyy="${(2/5)*m*r*r}" iyz="0"
+               izz="${(2/5)*m*r*r}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ================================================================= -->
+  <!-- Base Footprint (Ground Projection)                               -->
+  <!-- ================================================================= -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ================================================================= -->
+  <!-- Main Cleaner Robot Chassis                                       -->
+  <!-- ================================================================= -->
+  <link name="base_link">
+    <!-- Main Sweeper Body (High-visibility Emerald / Municipal Green) -->
+    <visual>
+      <origin xyz="0 0 ${chassis_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+      </geometry>
+      <material name="municipal_green">
+        <color rgba="0.12 0.72 0.35 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${chassis_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+      </geometry>
+    </collision>
+
+    <!-- Lower Bumper & Brush Skirt (Carbon Dark Grey) -->
+    <visual>
+      <origin xyz="0.02 0 ${chassis_height*0.18}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_length + 0.04} ${chassis_width + 0.03} 0.05"/>
+      </geometry>
+      <material name="bumper_grey">
+        <color rgba="0.15 0.16 0.18 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.02 0 ${chassis_height*0.18}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_length + 0.04} ${chassis_width + 0.03} 0.05"/>
+      </geometry>
+    </collision>
+
+    <!-- Aerodynamic Top Cowl (Gloss Pearl White) -->
+    <visual>
+      <origin xyz="-0.04 0 ${chassis_height + 0.02}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_length*0.75} ${chassis_width*0.85} 0.04"/>
+      </geometry>
+      <material name="pearl_white">
+        <color rgba="0.94 0.96 0.98 1.0"/>
+      </material>
+    </visual>
+
+    <!-- Transparent Waste Hopper / Dustbin (Smoky Tinted Acrylic) -->
+    <visual>
+      <origin xyz="-0.10 0 ${chassis_height + 0.055}" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.16 0.22 0.05"/>
+      </geometry>
+      <material name="tinted_acrylic">
+        <color rgba="0.2 0.35 0.3 0.7"/>
+      </material>
+    </visual>
+
+    <!-- Central Front Suction Intake Mouth -->
+    <visual>
+      <origin xyz="${chassis_length/2 + 0.02} 0 -0.01" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.06 0.18 0.04"/>
+      </geometry>
+      <material name="intake_metal">
+        <color rgba="0.25 0.25 0.28 1.0"/>
+      </material>
+    </visual>
+
+    <!-- Front Left Rotating Disc Sweeper Brush Visual -->
+    <visual>
+      <origin xyz="${chassis_length/2 + 0.05} 0.12 -0.02" rpy="0.15 0 0"/>
+      <geometry>
+        <cylinder radius="0.075" length="0.025"/>
+      </geometry>
+      <material name="brush_yellow">
+        <color rgba="0.95 0.75 0.05 1.0"/>
+      </material>
+    </visual>
+
+    <!-- Front Right Rotating Disc Sweeper Brush Visual -->
+    <visual>
+      <origin xyz="${chassis_length/2 + 0.05} -0.12 -0.02" rpy="-0.15 0 0"/>
+      <geometry>
+        <cylinder radius="0.075" length="0.025"/>
+      </geometry>
+      <material name="brush_yellow">
+        <color rgba="0.95 0.75 0.05 1.0"/>
+      </material>
+    </visual>
+
+    <!-- Twin LED Headlights (Bright White) -->
+    <visual>
+      <origin xyz="${chassis_length/2 + 0.01} 0.11 ${chassis_height*0.6}" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.02" length="0.02"/></geometry>
+      <material name="led_white"><color rgba="1.0 1.0 1.0 1.0"/></material>
+    </visual>
+    <visual>
+      <origin xyz="${chassis_length/2 + 0.01} -0.11 ${chassis_height*0.6}" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.02" length="0.02"/></geometry>
+      <material name="led_white"><color rgba="1.0 1.0 1.0 1.0"/></material>
+    </visual>
+
+    <!-- Rear Brake / Hazard Taillights (Vivid Red) -->
+    <visual>
+      <origin xyz="${-chassis_length/2 - 0.005} 0.10 ${chassis_height*0.5}" rpy="0 0 0"/>
+      <geometry><box size="0.01 0.06 0.025"/></geometry>
+      <material name="tail_red"><color rgba="0.9 0.1 0.1 1.0"/></material>
+    </visual>
+    <visual>
+      <origin xyz="${-chassis_length/2 - 0.005} -0.10 ${chassis_height*0.5}" rpy="0 0 0"/>
+      <geometry><box size="0.01 0.06 0.025"/></geometry>
+      <material name="tail_red"><color rgba="0.9 0.1 0.1 1.0"/></material>
+    </visual>
+
+    <!-- Top Digital Status Screen / Beacon Base -->
+    <visual>
+      <origin xyz="0.06 0 ${chassis_height + 0.045}" rpy="0 0 0"/>
+      <geometry><box size="0.08 0.12 0.015"/></geometry>
+      <material name="screen_cyan"><color rgba="0.1 0.8 0.9 1.0"/></material>
+    </visual>
+
+    <xacro:box_inertia m="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}"/>
+  </link>
+
+  <gazebo reference="base_link">
+    <visual>
+      <material>
+        <ambient>0.12 0.72 0.35 1.0</ambient>
+        <diffuse>0.15 0.78 0.38 1.0</diffuse>
+        <specular>0.4 0.4 0.4 1.0</specular>
+      </material>
+    </visual>
+  </gazebo>
+
+  <!-- ================================================================= -->
+  <!-- Left Drive Wheel                                                 -->
+  <!-- ================================================================= -->
+  <link name="left_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <material name="tire_rubber">
+        <color rgba="0.12 0.12 0.12 1.0"/>
+      </material>
+    </visual>
+    <visual>
+      <origin xyz="0 0.018 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius*0.55}" length="0.005"/>
+      </geometry>
+      <material name="hub_silver">
+        <color rgba="0.75 0.78 0.82 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+  </link>
+
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="0 ${wheel_separation/2} 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <gazebo reference="left_wheel">
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
+    <visual>
+      <material>
+        <ambient>0.12 0.12 0.12 1.0</ambient>
+        <diffuse>0.18 0.18 0.18 1.0</diffuse>
+      </material>
+    </visual>
+  </gazebo>
+
+  <!-- ================================================================= -->
+  <!-- Right Drive Wheel                                                -->
+  <!-- ================================================================= -->
+  <link name="right_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <material name="tire_rubber">
+        <color rgba="0.12 0.12 0.12 1.0"/>
+      </material>
+    </visual>
+    <visual>
+      <origin xyz="0 -0.018 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius*0.55}" length="0.005"/>
+      </geometry>
+      <material name="hub_silver">
+        <color rgba="0.75 0.78 0.82 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+  </link>
+
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin xyz="0 ${-wheel_separation/2} 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <gazebo reference="right_wheel">
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
+    <visual>
+      <material>
+        <ambient>0.12 0.12 0.12 1.0</ambient>
+        <diffuse>0.18 0.18 0.18 1.0</diffuse>
+      </material>
+    </visual>
+  </gazebo>
+
+  <!-- ================================================================= -->
+  <!-- Front Passive Caster Wheel                                       -->
+  <!-- ================================================================= -->
+  <link name="caster_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="${caster_radius}"/></geometry>
+      <material name="caster_chrome"><color rgba="0.85 0.88 0.90 1.0"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="${caster_radius}"/></geometry>
+    </collision>
+    <xacro:sphere_inertia m="${caster_mass}" r="${caster_radius}"/>
+  </link>
+
+  <joint name="caster_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_wheel"/>
+    <origin xyz="${chassis_length/2 - 0.05} 0 ${-wheel_radius + caster_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="caster_wheel">
+    <mu1>0.001</mu1>
+    <mu2>0.001</mu2>
+    <visual>
+      <material>
+        <ambient>0.85 0.88 0.90 1.0</ambient>
+        <diffuse>0.90 0.92 0.95 1.0</diffuse>
+      </material>
+    </visual>
+  </gazebo>
+
+  <!-- ================================================================= -->
+  <!-- Rear Stabilizer Caster Ball                                      -->
+  <!-- ================================================================= -->
+  <link name="rear_caster">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="${caster_radius}"/></geometry>
+      <material name="caster_chrome"><color rgba="0.85 0.88 0.90 1.0"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="${caster_radius}"/></geometry>
+    </collision>
+    <xacro:sphere_inertia m="${caster_mass}" r="${caster_radius}"/>
+  </link>
+
+  <joint name="rear_caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="rear_caster"/>
+    <origin xyz="${-chassis_length/2 + 0.05} 0 ${-wheel_radius + caster_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="rear_caster">
+    <mu1>0.001</mu1>
+    <mu2>0.001</mu2>
+  </gazebo>
+
+  <!-- ================================================================= -->
+  <!-- 2D Planar LiDAR Sensor Tower (Elevated Mast)                     -->
+  <!-- ================================================================= -->
+  <link name="laser_frame">
+    <!-- Slim Elevation Mast -->
+    <visual>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.02" length="0.10"/></geometry>
+      <material name="mast_dark"><color rgba="0.12 0.12 0.15 1.0"/></material>
+    </visual>
+    <!-- Turret Housing Base -->
+    <visual>
+      <origin xyz="0 0 -0.005" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.042" length="0.03"/></geometry>
+      <material name="tower_dark"><color rgba="0.1 0.1 0.12 1.0"/></material>
+    </visual>
+    <!-- Spinning Scanner Cap -->
+    <visual>
+      <origin xyz="0 0 0.015" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.038" length="0.025"/></geometry>
+      <material name="lidar_turret"><color rgba="0.05 0.05 0.08 1.0"/></material>
+    </visual>
+    <!-- Blue Optical Strip Ring -->
+    <visual>
+      <origin xyz="0 0 0.012" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.040" length="0.006"/></geometry>
+      <material name="optical_blue"><color rgba="0.0 0.5 1.0 0.9"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.042" length="0.05"/></geometry>
+    </collision>
+    <xacro:cylinder_inertia m="0.15" r="0.042" h="0.05"/>
+  </link>
+
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser_frame"/>
+    <!-- Elevated 11cm above chassis for 100% unobstructed horizontal 360-degree scan -->
+    <origin xyz="0.04 0 ${chassis_height + 0.11}" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="laser_frame">
+    <visual>
+      <material>
+        <ambient>0.05 0.05 0.08 1.0</ambient>
+        <diffuse>0.10 0.10 0.15 1.0</diffuse>
+      </material>
+    </visual>
+    <sensor name="planar_lidar" type="gpu_lidar">
+      <pose>0 0 0.015 0 0 0</pose>
+      <topic>/scan</topic>
+      <visualize>false</visualize>
+      <update_rate>15</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159265</min_angle>
+            <max_angle>3.14159265</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.25</min>
+          <max>12.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <frame_id>laser_frame</frame_id>
+    </sensor>
+  </gazebo>
+
+  <!-- ================================================================= -->
+  <!-- Forward RGB Camera Sensor (AI Trash Vision)                      -->
+  <!-- ================================================================= -->
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.03 0.10 0.03"/></geometry>
+      <material name="camera_dark"><color rgba="0.1 0.1 0.12 1.0"/></material>
+    </visual>
+    <!-- Twin Lens Visuals -->
+    <visual>
+      <origin xyz="0.016 0.025 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="0.009" length="0.005"/></geometry>
+      <material name="optical_blue"><color rgba="0.0 0.5 1.0 1.0"/></material>
+    </visual>
+    <visual>
+      <origin xyz="0.016 -0.025 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="0.009" length="0.005"/></geometry>
+      <material name="optical_blue"><color rgba="0.0 0.5 1.0 1.0"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.03 0.10 0.03"/></geometry>
+    </collision>
+    <xacro:box_inertia m="0.10" x="0.03" y="0.10" z="0.03"/>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <!-- Angled downward by ~8.5 deg (0.15 rad) to optimize ground litter detection -->
+    <origin xyz="${chassis_length/2 + 0.01} 0 ${chassis_height*0.75}" rpy="0 0.15 0"/>
+  </joint>
+
+  <!-- Optical frame for ROS camera conventions -->
+  <link name="camera_optical_frame"/>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
+  </joint>
+
+  <gazebo reference="camera_link">
+    <visual>
+      <material>
+        <ambient>0.1 0.1 0.12 1.0</ambient>
+        <diffuse>0.15 0.15 0.18 1.0</diffuse>
+      </material>
+    </visual>
+    <sensor name="camera_sensor" type="camera">
+      <always_on>true</always_on>
+      <update_rate>20</update_rate>
+      <visualize>false</visualize>
+      <topic>/camera/image_raw</topic>
+      <camera>
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>20.0</far>
+        </clip>
+      </camera>
+      <frame_id>camera_optical_frame</frame_id>
+    </sensor>
+  </gazebo>
+
+  <!-- ================================================================= -->
+  <!-- GPS / GNSS Receiver Antenna Module                                -->
+  <!-- ================================================================= -->
+  <link name="gps_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.035" length="0.02"/>
+      </geometry>
+      <material name="gps_dark">
+        <color rgba="0.12 0.12 0.15 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="gps_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="gps_link"/>
+    <origin xyz="-0.12 0 ${chassis_height + 0.04}" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="gps_link">
+    <sensor name="navsat_sensor" type="navsat">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <topic>/gps/fix</topic>
+      <navsat>
+        <position_sensing>
+          <horizontal>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>0.000001</stddev>
+            </noise>
+          </horizontal>
+          <vertical>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>0.000001</stddev>
+            </noise>
+          </vertical>
+        </position_sensing>
+      </navsat>
+    </sensor>
+  </gazebo>
+
+  <!-- ================================================================= -->
+  <!-- Differential Drive Plugin (Gazebo Harmonic)                       -->
+  <!-- ================================================================= -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>${wheel_separation}</wheel_separation>
+      <wheel_radius>${wheel_radius}</wheel_radius>
+      <max_linear_acceleration>1.6</max_linear_acceleration>
+      <min_linear_acceleration>-1.6</min_linear_acceleration>
+      <max_angular_acceleration>3.2</max_angular_acceleration>
+      <min_angular_acceleration>-3.2</min_angular_acceleration>
+      <max_linear_velocity>0.85</max_linear_velocity>
+      <min_linear_velocity>-0.85</min_linear_velocity>
+      <max_angular_velocity>2.2</max_angular_velocity>
+      <min_angular_velocity>-2.2</min_angular_velocity>
+      <max_torque>35.0</max_torque>
+      <topic>/cmd_vel</topic>
+      <odom_topic>/odom</odom_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_footprint</child_frame_id>
+      <odom_publisher_frequency>30</odom_publisher_frequency>
+      <tf_topic>/tf</tf_topic>
+    </plugin>
+
+
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      <topic>/joint_states</topic>
+    </plugin>
+  </gazebo>
+
+</robot>
